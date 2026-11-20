@@ -52,3 +52,11 @@ jobs:
             exit 0
           fi
           pnpm run deploy
+          echo "deployed=1" >> "$GITHUB_OUTPUT"
+        id: deploy
+      # The live site, once deployed: its headers, and each project running from it.
+      - name: Check solid.runbun.dev
+        if: steps.deploy.outputs.deployed == '1'
+        run: pnpm check --url https://solid.runbun.dev
+        env:
+          CHROME: /usr/bin/google-chrome

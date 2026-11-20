@@ -3,6 +3,7 @@
 // profile. `/` must open straight into the playground under its name, with the default project running and the
 // gallery listing exactly hosting.json's projects; then each of those must install and run.
 //   node scripts/check.ts                   Chrome: CHROME=<binary>, else the usual install on macOS or Linux
+//   node scripts/check.ts --url <site>      the same checks against a deployed site (no build, no local server)
 import { execFileSync } from "node:child_process";
 import { existsSync, mkdtempSync, readFileSync, rmSync, statSync } from "node:fs";
 import { createServer } from "node:http";
@@ -12,16 +13,23 @@ import puppeteer, { type Page } from "puppeteer-core";
 
 const root = join(import.meta.dirname, "..");
 const PORT = 5199;
-const origin = `http://localhost:${PORT}`;
+const at = process.argv.indexOf("--url");
+const remote = at > 0 ? new URL(process.argv[at + 1]).origin : undefined;
+const origin = remote ?? `http://localhost:${PORT}`;
 const hosting = JSON.parse(readFileSync(join(root, "hosting.json"), "utf8"));
 const chrome =
   process.env.CHROME ??
   ["/Applications/Google Chrome.app/Contents/MacOS/Google Chrome", "/usr/bin/google-chrome", "/usr/bin/chromium"].find((p) => existsSync(p));
 if (!chrome) throw new Error("check: no Chrome found: set CHROME to its binary");
 
-execFileSync(process.execPath, [join(root, "scripts/build.ts"), "--origin", origin], { stdio: "inherit" });
+if (!remote) execFileSync(process.execPath, [join(root, "scripts/build.ts"), "--origin", origin], { stdio: "inherit" });
 const dist = join(root, "dist");
-const examples: string[] = JSON.parse(readFileSync(join(dist, "examples.json"), "utf8"));
+const examples: string[] = remote ? await (await fetch(`${remote}/examples.json`)).json() : JSON.parse(readFileSync(join(dist, "examples.json"), "utf8"));
+if (remote) {
+  const res = await fetch(`${remote}/`);
+  for (const [k, v] of [["cross-origin-opener-policy", "same-origin"], ["cross-origin-embedder-policy", "credentialless"]])
+    if (res.headers.get(k) !== v) throw new Error(`check: ${remote}/ sends ${k}: ${res.headers.get(k)}, the playground needs ${v}`);
+}
 
 // A static server like Cloudflare's: clean URLs (/embed is embed.html), and cross-origin isolation on every response.
 const types: Record<string, string> = {
@@ -47,7 +55,7 @@ const server = createServer((req, res) => {
   if (!file) return void res.writeHead(404).end("not found");
   res.writeHead(200, { "content-type": types[extname(file)] ?? "application/octet-stream" }).end(readFileSync(file));
 });
-await new Promise<void>((ok) => server.listen(PORT, "127.0.0.1", ok));
+if (!remote) await new Promise<void>((ok) => server.listen(PORT, "127.0.0.1", ok));
 
 const problems: string[] = [];
 const profile = mkdtempSync(join(tmpdir(), "solid-playground-check-"));
@@ -91,7 +99,7 @@ try {
   }
 } finally {
   await browser.close();
-  server.close();
+  if (!remote) server.close();
   rmSync(profile, { recursive: true, force: true });
 }
 

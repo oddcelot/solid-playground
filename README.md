@@ -17,6 +17,7 @@ runbun's release archives and says how this copy differs from runbun.dev:
 pnpm install
 pnpm check       # builds for http://localhost:5199, serves it, runs each project in headless Chrome
 pnpm run deploy  # builds for solid.runbun.dev and deploys dist/ with wrangler (wrangler.jsonc)
+pnpm check --url https://solid.runbun.dev   # the same checks against the live site
 ```
 
 Node 24 or later runs the scripts. Serving `dist/` needs cross-origin isolation headers on every response
