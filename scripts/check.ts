@@ -76,6 +76,12 @@ try {
   if (hosting.brand) {
     const header = await page.evaluate(() => ({ name: document.querySelector("header #title")?.textContent?.trim(), logo: !!document.querySelector("header img.brand-logo") }));
     if (header.name !== hosting.name || !header.logo) problems.push(`the header's brand is ${JSON.stringify(header)}`);
+    // Its share card is the picture the page names, and is there.
+    if (hosting.brand.card) {
+      const card = await page.evaluate(() => document.querySelector<HTMLMetaElement>('meta[property="og:image"]')?.content ?? "");
+      const got = /\/brand-card-[0-9a-f]+\.png$/.test(card) ? await fetch(new URL(new URL(card).pathname, page.url())) : null;
+      if (!got?.ok || got.headers.get("content-type") !== "image/png") problems.push(`the share card is ${card || "missing"} (${got?.status ?? "not the brand's"})`);
+    }
   }
 
   await page.click("#example");

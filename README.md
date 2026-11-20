@@ -7,7 +7,7 @@ It is [runbun](https://runbun.dev)'s playground, self-hosted: this repository ho
 runbun's release archives and says how this copy differs from runbun.dev:
 
 - [`playground.json`](playground.json): the runbun release (`version`) and the archive's SHA-256.
-- [`hosting.json`](hosting.json): the site's name, its brand (Solid's logo from [`brand/`](brand), linking to
+- [`hosting.json`](hosting.json): the site's name, its brand (Solid's logo and share card from [`brand/`](brand), linking to
   solidjs.com) and theme (runbun's Solid family: the SolidJS sites' colors and Geist), which of runbun's bundled
   examples the gallery lists and which one opens first, no landing page, no Local Bun switch, and the origin it is
   served from.
