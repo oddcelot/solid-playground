@@ -8,7 +8,7 @@
   },
   "theme": { "family": "solid-light" },
   "localRunner": false,
-  "gallery": ["solid-vite-hmr", "solid-ssr-dashboard", "astro-solid-demo"],
+  "gallery": ["solid-vite-hmr", "solid-ssr-dashboard", "astro-solid-demo", "reactivescript", "reactivescript-selects"],
   "defaultProject": "solid-vite-hmr",
   "landing": false,
   "editorOrigins": ["https://solid.runbun.dev"]
