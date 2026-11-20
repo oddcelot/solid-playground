@@ -33,6 +33,8 @@ execFileSync("tar", ["-xzf", archive, "-C", cache]);
 const hosting = JSON.parse(readFileSync(join(root, "hosting.json"), "utf8"));
 const at = process.argv.indexOf("--origin");
 if (at > 0) hosting.editorOrigins = [new URL(process.argv[at + 1]).origin];
+// The copy configure reads is in the cache folder: the brand's logos are paths relative to hosting.json here.
+for (const key of ["logo", "logoDark"]) if (hosting.brand?.[key]) hosting.brand[key] = join(root, hosting.brand[key]);
 const file = join(cache, "hosting.json");
 writeFileSync(file, JSON.stringify(hosting, null, 2));
 execFileSync(process.execPath, ["configure.ts", "dist", file], { cwd: join(cache, name), stdio: "inherit" });

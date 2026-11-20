@@ -1,5 +1,13 @@
 {
   "name": "Solid Playground",
+  "brand": {
+    "logo": "brand/solid.svg",
+    "logoDark": "brand/solid-dark.svg",
+    "home": "https://www.solidjs.com/",
+    "description": "Run SolidJS projects in your browser: edit, install and preview, with nothing to set up."
+  },
+  "theme": { "family": "solid-light" },
+  "localRunner": false,
   "gallery": ["solid-vite-hmr", "solid-ssr-dashboard", "astro-solid-demo"],
   "defaultProject": "solid-vite-hmr",
   "landing": false,

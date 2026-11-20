@@ -71,7 +71,12 @@ try {
   const status = await settled(page);
   if (!status.startsWith("Running")) problems.push(`the default project (${hosting.defaultProject}) didn't start: "${status}"`);
   const title = await page.title();
-  if (!title.endsWith(`· ${hosting.name}`)) problems.push(`the tab title is "${title}"`);
+  // With a brand the title is the site's name alone, and the header carries its logo and name.
+  if (hosting.brand ? title !== hosting.name : !title.endsWith(`· ${hosting.name}`)) problems.push(`the tab title is "${title}"`);
+  if (hosting.brand) {
+    const header = await page.evaluate(() => ({ name: document.querySelector("header #title")?.textContent?.trim(), logo: !!document.querySelector("header img.brand-logo") }));
+    if (header.name !== hosting.name || !header.logo) problems.push(`the header's brand is ${JSON.stringify(header)}`);
+  }
 
   await page.click("#example");
   await page.waitForSelector(".gallery-card");
