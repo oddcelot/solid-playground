@@ -1,0 +1,4 @@
+# wrangler's own: esbuild (bundling) and workerd (wrangler dev).
+allowBuilds:
+  esbuild: true
+  workerd: true

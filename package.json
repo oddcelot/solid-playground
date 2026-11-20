@@ -1,0 +1,20 @@
+{
+  "name": "solid-playground",
+  "private": true,
+  "type": "module",
+  "description": "A SolidJS playground at solid.runbun.dev: runbun's self-hosting release, configured, not built",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "build": "node scripts/build.ts",
+    "check": "node scripts/check.ts",
+    "deploy": "node scripts/build.ts && wrangler deploy"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "puppeteer-core": "^25.18.1",
+    "wrangler": "^4.165.0"
+  },
+  "packageManager": "pnpm@12.21.0"
+}

@@ -1,0 +1,10 @@
+// solid.runbun.dev: dist/ (scripts/build.ts) as static assets, no Worker code. dist/_headers, from runbun's archive,
+// sends the cross-origin isolation headers the playground needs.
+{
+  "name": "solid-playground",
+  "compatibility_date": "2026-11-20",
+  "assets": { "directory": "./dist" },
+  "routes": [{ "pattern": "solid.runbun.dev", "custom_domain": true }],
+  "workers_dev": false,
+  "preview_urls": false
+}

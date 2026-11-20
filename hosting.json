@@ -1,0 +1,7 @@
+{
+  "name": "Solid Playground",
+  "gallery": ["solid-vite-hmr", "solid-ssr-dashboard", "astro-solid-demo"],
+  "defaultProject": "solid-vite-hmr",
+  "landing": false,
+  "editorOrigins": ["https://solid.runbun.dev"]
+}
