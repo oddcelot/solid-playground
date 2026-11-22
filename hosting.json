@@ -10,6 +10,7 @@
   },
   "theme": { "family": "solid-light" },
   "localRunner": false,
+  "languages": ["reactivescript"],
   "gallery": ["solid-vite-hmr", "solid-ssr-dashboard", "astro-solid-demo", "reactivescript", "reactivescript-selects"],
   "defaultProject": "solid-vite-hmr",
   "landing": false,
