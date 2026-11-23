@@ -8,7 +8,16 @@
     "card": "brand/card.png",
     "cardAlt": "Solid Playground: run SolidJS projects in your browser, beside the Solid logo"
   },
-  "theme": { "family": "solid-light" },
+  "theme": {
+    "family": "solid-light",
+    "fonts": ["/fonts/geist/wght.css", "/fonts/geist-mono/wght.css"],
+    "vars": {
+      "base": {
+        "--font-ui": "\"Geist Variable\", ui-sans-serif, system-ui, sans-serif",
+        "--font-mono": "\"Geist Mono Variable\", ui-monospace, \"SF Mono\", Menlo, Consolas, monospace"
+      }
+    }
+  },
   "localRunner": false,
   "languages": ["reactivescript"],
   "gallery": ["solid-start-devtools", "solid-vite-hmr", "solid-ssr-dashboard", "astro-solid-demo", "reactivescript", "reactivescript-selects"],

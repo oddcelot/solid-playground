@@ -1,5 +1,6 @@
 // Builds the site into dist/: downloads the runbun playground release pinned in playground.json, checks its SHA-256,
-// unpacks it, and points it at this host with the archive's own configure.ts and hosting.json. Nothing is compiled.
+// unpacks it, points it at this host with the archive's own configure.ts and hosting.json, and adds the site's fonts
+// (Geist, from node_modules) under dist/fonts/. Nothing is compiled.
 //   node scripts/build.ts                         for solid.runbun.dev (hosting.json)
 //   node scripts/build.ts --origin <url>          the same, served at another origin (scripts/check.ts: localhost)
 import { execFileSync } from "node:child_process";
@@ -42,4 +43,17 @@ execFileSync(process.execPath, ["configure.ts", "dist", file], { cwd: join(cache
 const dist = join(root, "dist");
 rmSync(dist, { recursive: true, force: true });
 cpSync(join(cache, name, "dist"), dist, { recursive: true });
+
+// The site's own fonts (hosting.json's theme.fonts name these stylesheets): Geist and Geist Mono, as the SolidJS sites
+// have them, served from here. Each package's variable-weight stylesheet and the files it names.
+for (const font of ["geist", "geist-mono"]) {
+  const from = join(root, "node_modules/@fontsource-variable", font);
+  const to = join(dist, "fonts", font);
+  const css = readFileSync(join(from, "wght.css"), "utf8");
+  mkdirSync(join(to, "files"), { recursive: true });
+  writeFileSync(join(to, "wght.css"), css);
+  for (const [, file] of css.matchAll(/url\(\.\/files\/([\w.-]+)\)/g)) cpSync(join(from, "files", file), join(to, "files", file));
+}
+for (const href of hosting.theme?.fonts ?? [])
+  if (href.startsWith("/") && !existsSync(join(dist, href))) throw new Error(`build: hosting.json's theme.fonts names ${href}, which dist/ doesn't have`);
 console.log(`build: dist/ is runbun ${version} as "${hosting.name}" for ${hosting.editorOrigins[0]}`);

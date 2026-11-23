@@ -84,6 +84,28 @@ try {
     }
   }
 
+  // Its fonts (hosting.json's theme.fonts and the variables that name them): the stylesheets are there, and the first
+  // family of the UI's and the code's font is loaded and is what the page's variable says (the UI's on a button too).
+  for (const href of hosting.theme?.fonts ?? []) {
+    const got = await fetch(new URL(href, origin));
+    if (!got.ok || !got.headers.get("content-type")?.startsWith("text/css")) problems.push(`the font stylesheet ${href} answers ${got.status} (${got.headers.get("content-type")})`);
+  }
+  for (const [name, selector] of [["--font-ui", "header button"], ["--font-mono", null]] as const) {
+    const want = hosting.theme?.vars?.base?.[name]?.split(",")[0].trim().replace(/^"|"$/g, "");
+    if (!want) continue;
+    const got = await page.evaluate(
+      async (want, selector, name) => {
+        await document.fonts.load(`13px "${want}"`, "Run");
+        const el = selector ? document.querySelector(selector) : null;
+        return { loaded: document.fonts.check(`13px "${want}"`), family: el ? getComputedStyle(el).fontFamily : getComputedStyle(document.documentElement).getPropertyValue(name) };
+      },
+      want,
+      selector,
+      name,
+    );
+    if (!got.loaded || !got.family.includes(want)) problems.push(`${name}: "${want}" isn't the font in use (${JSON.stringify(got)})`);
+  }
+
   await page.click("#example");
   await page.waitForSelector(".gallery-card");
   const cards = new Set<string>();
